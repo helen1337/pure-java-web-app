@@ -42,6 +42,7 @@
         <c:if test="${not empty weatherForecast}">
             <div class="card-body">
                 <h4>${weatherForecast.city}</h4>
+                <h4>${weatherForecast.city}</h4>
                 <p><strong>${weatherForecast.weatherParam}: ${weatherForecast.additionWeatherParams}</strong></p>
                 <p>longitude:${weatherForecast.longitude}, latitude:${weatherForecast.latitude}</p>
                 <p>Current temperature:<strong>${weatherForecast.temp}°C</strong></p>
