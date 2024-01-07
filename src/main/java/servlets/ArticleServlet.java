@@ -3,8 +3,8 @@ package servlets;
 
 import models.Article;
 import service.ArticleService;
-import utils.EditArticleUtils;
-import utils.NewArticleUtils;
+import utils.EditArticleParser;
+import utils.NewArticleParser;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,9 +17,7 @@ import java.util.Objects;
 
 
 public class ArticleServlet extends HttpServlet {
-
     ArticleService articleService = ArticleService.getInstance();
-
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action != null) {
@@ -89,16 +87,19 @@ public class ArticleServlet extends HttpServlet {
         String action = request.getParameter("action");
         boolean result;
         String message;
+        Article article;
         switch (action) {
             case "add" -> {
-                result = NewArticleUtils.createArticle(request);
+                article = NewArticleParser.parsArticle(request);
+                result = articleService.addArticle(article);
                 if (result) message = "The article has been successfully created!";
                 else message = "Hm, something's wrong... Please, try again later!";
                 session.setAttribute("message", message);
                 response.sendRedirect("/my-blog/all_articles");
             }
             case "edit" -> {
-                result = EditArticleUtils.editArticle(request);
+                article = EditArticleParser.parsArticle(request);
+                result = articleService.editArticle(article);
                 if (result) message = "The article has been successfully edited!";
                 else message = "Hm, something's wrong... Please, try again later!";
                 session.setAttribute("message", message);
@@ -106,5 +107,4 @@ public class ArticleServlet extends HttpServlet {
             }
         }
     }
-
 }
