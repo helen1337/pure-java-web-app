@@ -1,21 +1,17 @@
 package utils;
 
 import models.Article;
-import service.ArticleService;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class EditArticleUtils {
-
-    public static boolean editArticle(HttpServletRequest request) {
+public class EditArticleParser {
+    public static Article parsArticle(HttpServletRequest request) {
         String title = request.getParameter("title");
         String author = request.getParameter("author");
         String theme = request.getParameter("theme");
         String content = request.getParameter("content");
         int id = Integer.parseInt(request.getParameter("id"));
 
-
-        ArticleService articleService = ArticleService.getInstance();
         Article editArticle = new Article();
 
         editArticle.setTitle(title);
@@ -24,6 +20,6 @@ public class EditArticleUtils {
         editArticle.setContent(content);
         editArticle.setId(id);
 
-        return articleService.editArticle(editArticle);
+        return editArticle;
     }
 }
