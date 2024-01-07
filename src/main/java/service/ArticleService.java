@@ -7,6 +7,7 @@ import utils.ArticleUtils;
 
 
 import java.util.List;
+import java.util.Objects;
 
 
 public class ArticleService {
@@ -28,6 +29,10 @@ public class ArticleService {
             }
         }
         return instance;
+    }
+
+    public boolean addArticle(Article article) {
+        return Objects.nonNull(articleDao.addArticle(article));
     }
 
     public List<Article> getArticle(String column, String value) {
