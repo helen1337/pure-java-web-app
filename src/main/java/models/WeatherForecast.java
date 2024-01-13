@@ -8,7 +8,6 @@ public class WeatherForecast {
     private String weatherParam;
     private String additionWeatherParams;
     private String temp;
-
     private String tempFeelsLike;
     private double atmPressure;             //hPa
     private double humidity;                //%
@@ -190,7 +189,6 @@ public class WeatherForecast {
             return this;
         }
 
-
         public Builder setAtmPressure(double atmPressure) {
             weatherForecast.atmPressure = atmPressure;
             return this;
@@ -226,7 +224,6 @@ public class WeatherForecast {
             return this;
         }
 
-
         public Builder setSunriseTime(String sunriseTime) {
             weatherForecast.sunriseTime = sunriseTime;
             return this;
@@ -240,7 +237,5 @@ public class WeatherForecast {
         public WeatherForecast build() {
             return weatherForecast;
         }
-
-
     }
 }

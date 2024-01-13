@@ -1,34 +1,34 @@
 package utils;
 
-import dao.UserDao;
-import daoImpl.UserDaoImpl;
 import models.User;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class SignUpUtils {
-    public static String signUp(HttpServletRequest request){
+/**
+ * Utility class for parsing user registration information from a HttpServletRequest
+ */
+public class RegistrationParser {
 
+    /**
+     * Parses user registration information from the HttpServletRequest parameters.
+     *
+     * @param request The HttpServletRequest containing user registration parameters
+     * @return A User object populated with information from the request parameters
+     */
+    public static User parsRegisterUser(HttpServletRequest request) {
         String login = request.getParameter("login");
-
-        UserDao dao = UserDaoImpl.getInstance();
-        if (dao.isExist(login)) return "exist";
-
-        User newUser = new User();
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
         String password = request.getParameter("password");
         String email = request.getParameter("email");
         String city = request.getParameter("city");
-
+        User newUser = new User();
         newUser.setFirstName(firstName);
         newUser.setLastName(lastName);
         newUser.setLogin(login);
         newUser.setPassword(password);
         newUser.setEmail(email);
         newUser.setCity(city);
-
-        if (dao.signUp(newUser)) return "success";
-        return "fail";
+        return newUser;
     }
 }

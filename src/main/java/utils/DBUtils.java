@@ -1,8 +1,6 @@
 package utils;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class DBUtils {
     public static void close(Statement st) throws SQLException {
@@ -17,5 +15,15 @@ public class DBUtils {
             st.close();
         if (rs != null)
             rs.close();
+    }
+
+    public static Connection getConnection() throws ClassNotFoundException, SQLException {
+        String driver = AppConfigurationLoader.getProperty("driverDB");
+        String url = AppConfigurationLoader.getProperty("urlDB");
+        String user = AppConfigurationLoader.getProperty("userDB");
+        String password = AppConfigurationLoader.getProperty("passwordDB");
+
+        Class.forName(driver);
+        return DriverManager.getConnection(url, user, password);
     }
 }

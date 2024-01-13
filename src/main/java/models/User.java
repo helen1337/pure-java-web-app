@@ -1,8 +1,6 @@
 package models;
 
-
 public class User {
-
 
     private int user_id;
     private String firstName;
@@ -68,5 +66,4 @@ public class User {
 
     public User() {
     }
-
 }

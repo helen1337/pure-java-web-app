@@ -9,18 +9,24 @@ import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Service class for managing users
+ */
 public class UserDaoImpl implements UserDao {
 
     private Connection conn;
 
     private UserDaoImpl() throws ClassNotFoundException, SQLException {
-         Class.forName("com.mysql.cj.jdbc.Driver");
-         conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/blog",
-                "root", "root");
+        conn = DBUtils.getConnection();
     }
 
     private static UserDao instance;
 
+    /**
+     * Returns the singleton instance of UserDao
+     *
+     * @return The UserDao instance
+     */
     public static final UserDao getInstance() {
         if (instance == null) {
             try {
@@ -32,6 +38,11 @@ public class UserDaoImpl implements UserDao {
         return instance;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see daoImpl.UserDao#isExist(java.lang.String)
+     */
     @Override
     public boolean isExist(String login) {
         String sql = "select * from user where login=? ";
@@ -51,6 +62,11 @@ public class UserDaoImpl implements UserDao {
         return false;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see daoImpl.UserDao#signUp(models.User)
+     */
     @Override
     public boolean signUp(User newUser) {
         String sql = "insert into user(firstName, lastName, email, login, password, city) " +
@@ -75,7 +91,12 @@ public class UserDaoImpl implements UserDao {
         return result > 0;
     }
 
-
+    /*
+     * (non-Javadoc)
+     *
+     * @see daoImpl.UserDao#login(java.lang.String,
+     * java.lang.String)
+     */
     @Override
     public User login(String login, String password) {
 
@@ -111,15 +132,19 @@ public class UserDaoImpl implements UserDao {
         return user;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see daoImpl.UserDao#delete(int)
+     */
     @Override
-    public boolean delete(String user_id) {
+    public boolean delete(int user_id) {
         String sql = "delete from user where user_id=?";
         PreparedStatement ps;
         int result = 0;
-
         try {
             ps = conn.prepareStatement(sql);
-            ps.setString(1, user_id);
+            ps.setInt(1, user_id);
             result = ps.executeUpdate();
             DBUtils.close(ps);
         } catch (SQLException e) {
@@ -128,12 +153,16 @@ public class UserDaoImpl implements UserDao {
         return result != 0;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see daoImpl.UserDao#edit(models.User)
+     */
     @Override
     public boolean edit(User user) {
         String sql = "update user set firstName=?, lastName=?, email=?, password=?, city=? where user_id=?";
         PreparedStatement ps;
         int result = 0;
-
         try {
             ps = conn.prepareStatement(sql);
             ps.setString(1, user.getFirstName());

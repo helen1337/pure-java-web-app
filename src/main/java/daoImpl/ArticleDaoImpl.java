@@ -7,17 +7,23 @@ import utils.DBUtils;
 import java.sql.*;
 import java.util.*;
 
+/**
+ * Service class for managing articles
+ */
 public class ArticleDaoImpl implements ArticleDao {
 
     private Connection conn;
     private static ArticleDao instance;
 
     private ArticleDaoImpl() throws SQLException, ClassNotFoundException {
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/blog",
-                "root", "root");
+        conn = DBUtils.getConnection();
     }
 
+    /**
+     * Returns the singleton instance of ArticleDao
+     *
+     * @return ArticleDao instance
+     */
     public static final ArticleDao getInstance() {
         if (instance == null) {
             try {
@@ -29,8 +35,12 @@ public class ArticleDaoImpl implements ArticleDao {
         return instance;
     }
 
-    @Override
-    public List<String> getAllTheme() {
+    /*
+     * (non-Javadoc)
+     *
+     * @see daoImpl.ArticleDao#getAllTheme()
+     */
+    @Override    public List<String> getAllTheme() {
         String sql = "select distinct(theme) from article order by theme";
         List<String> themeList = null;
         try {
@@ -46,6 +56,12 @@ public class ArticleDaoImpl implements ArticleDao {
         }
         return themeList;
     }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see daoImpl.ArticleDao#addArticle(models.Article)
+     */
     @Override
     public Article addArticle(Article a) {
         String sql = "insert into article(title, author, theme, content, time) " +
@@ -65,6 +81,11 @@ public class ArticleDaoImpl implements ArticleDao {
         return this.getLastArticle();
     }
 
+    /**
+     * Retrieves the most recently added article from the database
+     *
+     * @return the latest Article object, or null if no articles are found
+     */
     private Article getLastArticle() {
         String sql = "select * from article order by time desc limit 1";
         try {
@@ -87,6 +108,11 @@ public class ArticleDaoImpl implements ArticleDao {
         return null;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see daoImpl.ArticleDao#deleteArticle(java.lang.String)
+     */
     @Override
     public boolean deleteArticle(String id) {
         String sql = "delete from article where id=?";
@@ -104,9 +130,14 @@ public class ArticleDaoImpl implements ArticleDao {
         return result != 0;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see daoImpl.ArticleDao#editArticle(models.Article)
+     */
     @Override
     public boolean editArticle(Article article) {
-        String sql = "update article set title=?, author=?, theme=?, content=? where id=" + article.getId();
+        String sql = "update article set title=?, author=?, theme=?, content=? where id=?";
         PreparedStatement ps = null;
         int result = 0;
 
@@ -116,6 +147,7 @@ public class ArticleDaoImpl implements ArticleDao {
             ps.setString(2, article.getAuthor());
             ps.setString(3, article.getTheme());
             ps.setString(4, article.getContent());
+            ps.setInt(5, article.getId());
             result = ps.executeUpdate();
             DBUtils.close(ps);
         } catch (SQLException e) {
@@ -124,6 +156,11 @@ public class ArticleDaoImpl implements ArticleDao {
         return result != 0;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see daoImpl.ArticleDao#getAllArticle()
+     */
     @Override
     public List<Article> getAllArticle() {
         List<Article> articlesList = new ArrayList<>();
@@ -151,6 +188,12 @@ public class ArticleDaoImpl implements ArticleDao {
         return articlesList;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see daoImpl.ArticleDao#getArticleByColumn(java.lang.String,
+     * java.lang.String)
+     */
     @Override
     public List<Article> getArticleByColumn(String column, String value) {
         List<Article> articlesList = null;
@@ -179,6 +222,11 @@ public class ArticleDaoImpl implements ArticleDao {
         return articlesList;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see daoImpl.ArticleDao#getById(java.lang.String)
+     */
     @Override
     public Article getById(String id) {
 

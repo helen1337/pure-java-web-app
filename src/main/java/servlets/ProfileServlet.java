@@ -1,6 +1,9 @@
 package servlets;
 
-import utils.ProfileUtils;
+import models.User;
+import service.UserService;
+import utils.SessionManager;
+import utils.UserParser;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -10,55 +13,55 @@ import java.util.Objects;
 
 public class ProfileServlet extends HttpServlet {
     RequestDispatcher dispatcher;
-
+    UserService userService = UserService.getInstance();
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        HttpSession session = request.getSession();
-        if (action!=null) {
-        switch (action) {
-            case "edit":
-                boolean result = ProfileUtils.editProfile(request);
+        if (Objects.equals(action, "edit")) {
+            User user = UserParser.parsUserFromRequest(request);
+            boolean result = userService.editUser(user);
                 if (result) {
+                    SessionManager.setUserToSession(request, user);
                     dispatcher = request.getRequestDispatcher("profile.jsp");
                     dispatcher.forward(request, response);
-
-                } else {
-                    session.setAttribute("message", "The profile has not been edited! Please try again later.");
+                }
+                else {
+                    SessionManager.sendMessageToSession(request,
+                            "The profile has not been edited! Please try again later.");
                     response.sendRedirect("/my-blog/profile");
-                } break;
+                }
         }
-        }
-
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        HttpSession session = request.getSession();
-        if (Objects.isNull(session.getAttribute("user"))) {
-            session.setAttribute("message", "You have not been logged in!");
+        if (!SessionManager.isUserInSession(request)) {
+            SessionManager.sendMessageToSession(request,
+                    "You have not been logged in!");
             response.sendRedirect("/my-blog/all_articles");
-        } else {
+        }
+        else {
             String action = request.getParameter("action");
             if (action != null) {
                 switch (action) {
                     case "edit":
-                        editProfile(request, response, session);
+                        editProfile(request, response);
                         break;
                     case "delete":
-                        deleteProfile(request, response, session);
+                        deleteProfile(request, response);
                 }
-            } else forwardProfile(request, response, session);
+            }
+            else forwardProfile(request, response);
         }
     }
 
-    private void forwardProfile(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+    private void forwardProfile(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         dispatcher = request.getRequestDispatcher("profile.jsp");
         dispatcher.forward(request, response);
     }
 
-    private void editProfile(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+    private void editProfile(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         request.setAttribute("action", "edit");
         String nextJSP = "/profile.jsp";
@@ -66,17 +69,19 @@ public class ProfileServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
-    private void deleteProfile(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
-        boolean result = ProfileUtils.deleteProfile(request);
+    private void deleteProfile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        User user = SessionManager.getUserFromSession(request);
+        boolean result = SessionManager.isUserInSession(request) && userService.deleteUser(user);
         if (result) {
-            session.setAttribute("message", "Profile has been deleted successfully!");
+            SessionManager.deleteUserFromSession(request);
+            SessionManager.sendMessageToSession(request,
+                    "Profile has been deleted successfully!");
             response.sendRedirect("/my-blog");
-
-        } else {
-            session.setAttribute("message", "Hm, something's wrong... Please, try again later!");
+        }
+        else {
+            SessionManager.sendMessageToSession(request,
+                    "Hm, something's wrong... Please, try again later!");
             response.sendRedirect("/my-blog/profile");
         }
-
     }
-
 }
