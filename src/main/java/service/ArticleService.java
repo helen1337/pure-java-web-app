@@ -5,6 +5,7 @@ import daoImpl.ArticleDaoImpl;
 import models.Article;
 import utils.ArticleUtils;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,7 +15,7 @@ import java.util.Objects;
 public class ArticleService {
     private ArticleDao articleDao;
     private static ArticleService instance;
-    private ArticleService() {
+    private ArticleService() throws SQLException, ClassNotFoundException {
         articleDao = ArticleDaoImpl.getInstance();
     }
 
@@ -23,13 +24,9 @@ public class ArticleService {
      *
      * @return The ArticleService instance
      */
-    public static final ArticleService getInstance() {
+    public static final ArticleService getInstance() throws SQLException, ClassNotFoundException {
         if (instance == null) {
-            try {
                 instance = new ArticleService();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
         return instance;
     }

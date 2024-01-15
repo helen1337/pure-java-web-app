@@ -4,6 +4,7 @@ import dao.UserDao;
 import daoImpl.UserDaoImpl;
 import models.User;
 
+import java.sql.SQLException;
 import java.util.Properties;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Properties;
 public class UserService {
     private UserDao userDao;
     private static UserService instance;
-    private UserService() {
+    private UserService() throws SQLException, ClassNotFoundException {
         userDao = UserDaoImpl.getInstance();
     }
 
@@ -20,13 +21,10 @@ public class UserService {
      * Returns the singleton instance of UserService
      *
      * @return The UserService instance
-     */public static final UserService getInstance() {
+     */
+    public static final UserService getInstance() throws SQLException, ClassNotFoundException {
         if (instance == null) {
-            try {
                 instance = new UserService();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
         return instance;
     }
@@ -88,5 +86,4 @@ public class UserService {
         int user_id = user.getUser_id();
         return userDao.delete(user_id);
     }
-
 }

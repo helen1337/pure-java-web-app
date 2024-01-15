@@ -16,6 +16,7 @@ import java.util.Objects;
 public class WeatherServlet extends HttpServlet {
 
     WeatherForecast weatherForecast;
+    WeatherForecastService weatherForecastService;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -39,7 +40,8 @@ public class WeatherServlet extends HttpServlet {
     private void searchForUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User user = SessionManager.getUserFromSession(request);
         String searchCity = user.getCity();
-        weatherForecast = WeatherForecastService.searchWeatherCity(searchCity);
+        weatherForecastService = WeatherForecastService.getInstance();
+        weatherForecast = weatherForecastService.searchWeatherCity(searchCity);
         if (Objects.nonNull(weatherForecast)) {
             request.setAttribute("weatherForecast", weatherForecast);
         }
@@ -52,7 +54,9 @@ public class WeatherServlet extends HttpServlet {
 
     private void searchByCity(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String searchCity = request.getParameter("city");
-        weatherForecast = WeatherForecastService.searchWeatherCity(searchCity);
+        //add if searchCity = null
+        weatherForecastService = WeatherForecastService.getInstance();
+        weatherForecast = weatherForecastService.searchWeatherCity(searchCity);
         System.out.println(searchCity);
         if (Objects.nonNull(weatherForecast)) {
             request.setAttribute("weatherForecast", weatherForecast);

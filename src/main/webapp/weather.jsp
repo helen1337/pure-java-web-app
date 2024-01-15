@@ -43,8 +43,8 @@
             <div class="card-body">
                 <h4>${weatherForecast.city}</h4>
                 <p><strong>${weatherForecast.weatherParam}: ${weatherForecast.additionWeatherParams}</strong></p>
-                <p>longitude:${weatherForecast.longitude}, latitude:${weatherForecast.latitude}</p>
-                <p>Current temperature:<strong>${weatherForecast.temp}°C</strong></p>
+                <p>longitude: ${weatherForecast.longitude}, latitude:${weatherForecast.latitude}</p>
+                <p>Current temperature: <strong>${weatherForecast.temp}°C</strong></p>
                 <p>Feels like: <strong>${weatherForecast.tempFeelsLike}°C</strong></p>
                 <p>Atmospheric Pressure: <strong>${weatherForecast.atmPressure} hPa</strong></p>
                 <p>Humidity: <strong>${weatherForecast.humidity}%</strong></p>
