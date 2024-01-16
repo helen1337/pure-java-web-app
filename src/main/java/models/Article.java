@@ -1,9 +1,9 @@
 package models;
 
 /**
- * The class represents a model for an article
- * It encapsulates various attributes of an article, including its unique identifier (ID),
- * title, author, theme, timestamp and content.
+ * The class represents a model for an article.
+ * <p>It encapsulates various attributes of an article, including its unique identifier (ID),
+ * title, author, theme, timestamp and content.</p>
  */
 public class Article {
     private int id;

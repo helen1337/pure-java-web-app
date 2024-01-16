@@ -17,7 +17,6 @@ package models;
  *                                       <p>// ... set other parameters ...</p>
  *                                       <p>.build();</p>
  * </ul>
- * Note: The class includes a static inner Builder class for constructing instances with a fluent interface.
  */
 public class WeatherForecast {
     private String city;

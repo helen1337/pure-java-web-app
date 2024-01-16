@@ -191,7 +191,6 @@ public class ArticleServlet extends HttpServlet {
      * @param request  The HttpServletRequest object containing the client's POST request.
      * @param response The HttpServletResponse object for sending responses to the client.
      * @throws IOException      If an input or output exception occurs during the servlet processing.
-     * @throws ServletException If an exception occurs that interrupts the normal servlet processing.
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String action = request.getParameter("action");

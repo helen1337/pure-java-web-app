@@ -15,6 +15,12 @@ public class AppConfigurationLoader {
 
     private static Properties properties;
 
+    /**
+     * Retrieves the properties from the configuration file. If the properties are not
+     * already loaded, it attempts to read and load the configuration.
+     *
+     * @return The loaded properties.
+     */
     private static Properties getProperties() {
         if (properties == null) {
             try {

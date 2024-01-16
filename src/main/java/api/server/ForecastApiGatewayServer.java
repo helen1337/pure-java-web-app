@@ -74,7 +74,7 @@ public class ForecastApiGatewayServer implements Runnable {
                 }
             }
         }
-        System.out.println("Server stopped.");
+        System.out.println("Gateway server stopped.");
     }
 
     /**

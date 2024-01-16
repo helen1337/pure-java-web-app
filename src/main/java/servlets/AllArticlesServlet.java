@@ -34,12 +34,11 @@ public class AllArticlesServlet extends HttpServlet {
      *     in the request to perform the corresponding operation:
      *
      *      <ul>
-     *
-     *     <li>If the action is "searchAuthorArticles",
+     *     <li> If the action is "searchAuthorArticles",
      *          the method forwards the request to the view displaying articles
      *          authored by a specific author.</li>
      *
-     *     <li>Otherwise it retrieves the "theme" parameter,
+     *     <li> Otherwise it retrieves the "theme" parameter,
      *          forwards the request to the method handling
      *          the list of articles for the specified theme.</li>
      *      </ul>

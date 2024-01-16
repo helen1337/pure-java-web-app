@@ -18,8 +18,9 @@ public class ForecastApiClient {
     private static int socketPort;
 
     /**
-     * Constructs a ForecastApiClient with the specified port.
+     * Constructs a ForecastApiClient with the specified port and the local host.
      *
+     * @see #getLocalAddress()
      * @param port The port to connect to.
      * @throws UnknownHostException If an error occurs while getting the local host address.
      */
