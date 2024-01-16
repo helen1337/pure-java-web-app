@@ -22,13 +22,17 @@ public class ForecastJSONParser {
      * @param city the name of the city for which to retrieve weather information
      * @return WeatherForecast object representing the parsed weather information
      * @throws IOException If an I/O error occurs while making the weather request
+     * @throws RuntimeException if the JSON is empty or has an error code
      */
-    public static WeatherForecast parsJson(String JSON, String city) {
+    public static WeatherForecast parsJson(String JSON, String city) throws RuntimeException {
         if (JSON == null || JSON.isEmpty()) {
             System.out.printf("No raw data%n");
-            return null;
+            throw new RuntimeException("No response from weather server");
         }
         JSONObject forecastResponse = new JSONObject(JSON);
+        if (forecastResponse.getInt("cod") != 200) {
+            throw new RuntimeException("Invalid request to the weather server");
+        }
         // Longitude
         double longitude = forecastResponse.getJSONObject("coord").getDouble("lon");
         // Latitude
@@ -59,7 +63,7 @@ public class ForecastJSONParser {
         double windSpeed = forecastResponse.getJSONObject("wind").getDouble("speed");
         //Wind direction, degrees
         double windDeg;
-        String windDir = null;
+        String windDir = "-";
         if (windSpeed != 0) {
             windDeg = forecastResponse.getJSONObject("wind").getDouble("deg");
             windDir = windDirection(windDeg);

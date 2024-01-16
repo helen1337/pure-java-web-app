@@ -15,6 +15,8 @@ public class WeatherForecastService {
     private ForecastApiGatewayServer server;
     private final ForecastApiClient client;
     private static WeatherForecastService instance;
+
+    private static WeatherForecast weatherForecast = null;
     private static final int port = 9000;
 
     /**
@@ -39,20 +41,25 @@ public class WeatherForecastService {
      * @return WeatherForecast object representing the weather information for the specified city.
      * @throws IOException If an I/O error occurs while retrieving the weather forecast.
      */
-    public WeatherForecast searchWeatherCity(String city) throws IOException {
-        startSearchingAPI();
-        String forecastJSON = client.getJSON(city);
-        stopAPI();
-        return ForecastJSONParser.parsJson(forecastJSON, city);
+    public WeatherForecast searchWeatherCity(String city) throws IOException, RuntimeException {
+            startSearchingAPI();
+            String forecastJSON = client.getJSON(city);
+            stopAPI();
+            weatherForecast = ForecastJSONParser.parsJson(forecastJSON, city);
+            return weatherForecast;
     }
 
     /**
      * Starts the API server for retrieving weather forecasts.
      */
-    private void startSearchingAPI() {
-        server = new ForecastApiGatewayServer(port);
-        new Thread(server).start();
-        System.out.println("Server start");
+    private void startSearchingAPI() throws RuntimeException {
+        try {
+            server = new ForecastApiGatewayServer(port);
+            new Thread(server).start();
+            System.out.println("Server start");
+        } catch (Exception e) {
+            throw new RuntimeException("Error weather API server");
+        }
     }
 
     /**

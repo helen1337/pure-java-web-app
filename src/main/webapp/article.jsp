@@ -44,7 +44,6 @@
                     </nav>
                 </c:if>
             </form>
-
         </div>
     </div>
 </body>

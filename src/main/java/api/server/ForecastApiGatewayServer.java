@@ -134,6 +134,7 @@ public class ForecastApiGatewayServer implements Runnable {
                 outputStream.flush();
             }
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException("Error request socket", e);
         }
     }

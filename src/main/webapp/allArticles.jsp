@@ -37,7 +37,6 @@
             <c:remove var="message" scope="session" />
         </c:if>
 
-
         <c:choose>
             <c:when test="${not empty articlesList}">
                 <c:forEach var="article" items="${articlesList}">

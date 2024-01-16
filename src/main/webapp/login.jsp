@@ -54,5 +54,4 @@
     </div>
 <c:import url="/WEB-INF/blocks/footer.jsp"/>
 </body>
-
 </html>

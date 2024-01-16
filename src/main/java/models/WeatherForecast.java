@@ -3,19 +3,20 @@ package models;
 /**
  * The class represents a model for weather forecast information.
  *
- * It encapsulates various attributes related to weather conditions, including location details,
+ * <p> It encapsulates various attributes related to weather conditions, including location details,
  * temperature, atmospheric pressure, humidity, wind speed, visibility, and additional information
- * such as rain and snow.
+ * such as rain and snow. </p>
  *
- * This class follows the Builder design pattern for convenient and readable instantiation.
- * Example usage:
+ * <p> This class follows the Builder design pattern for convenient and readable instantiation.</p>
+ * <ul>
+ * <p>Example usage:</p>
  * WeatherForecast weather = WeatherForecast.newBuilder()
- *                                       .setCity("New York")
- *                                       .setLatitude(40.7128)
- *                                       .setLongitude(-74.0060)
- *                                       // ... set other parameters ...
- *                                       .build();
- *
+ *                                       <p>.setCity("New York")</p>
+ *                                       <p>.setLatitude(40.7128)</p>
+ *                                       <p>.setLongitude(-74.0060)
+ *                                       <p>// ... set other parameters ...</p>
+ *                                       <p>.build();</p>
+ * </ul>
  * Note: The class includes a static inner Builder class for constructing instances with a fluent interface.
  */
 public class WeatherForecast {

@@ -13,11 +13,24 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 /**
- * Servlet handling user profile management processes
+ * Servlet for user profile management processes, including editing and deletion.
  */
 public class ProfileServlet extends HttpServlet {
     RequestDispatcher dispatcher;
     UserService userService;
+
+    /**
+     * Handles POST requests for editing user profiles.
+     * <p> Parses the user information from the request, edits the user profile
+     * using UserService, and updates the session with the modified user. </p>
+     * Forwards to the profile page ("/profile.jsp") if successful,
+     * otherwise redirects to the profile page with an error message.
+     *
+     * @param request  The HttpServletRequest object
+     * @param response The HttpServletResponse object
+     * @throws ServletException If a servlet-specific problem occurs
+     * @throws IOException      If an input or output exception occurs
+     */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -36,11 +49,25 @@ public class ProfileServlet extends HttpServlet {
                     response.sendRedirect("/my-blog/profile");
                 }
             } catch (SQLException | ClassNotFoundException e) {
-                forwardMainPageWithError(request, response, e);
+                forwardPageWithError(request, response, e);
             }
         }
     }
 
+    /**
+     * Handles GET requests for viewing and managing user profiles.
+     * <p> Checks if the user is logged in. </p>
+     * <ul> If not, redirects to the article list page ("/my-blog/all_articles") with the message.
+     * <p> If logged in, determines the requested action (edit, delete, or view) and performs
+     * the corresponding action by calling the methods. </p>
+     * <p> If an invalid action is specified, forwards to the profile page with a default action.</p>
+     * </ul>
+     *
+     * @param request  The HttpServletRequest object
+     * @param response The HttpServletResponse object
+     * @throws IOException      If an input or output exception occurs
+     * @throws ServletException If a servlet-specific problem occurs
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         if (!SessionManager.isUserInSession(request)) {
@@ -63,12 +90,28 @@ public class ProfileServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Forwards the request to the profile page ("/profile.jsp").
+     *
+     * @param request  The HttpServletRequest object
+     * @param response The HttpServletResponse object
+     * @throws ServletException If a servlet-specific problem occurs
+     * @throws IOException      If an input or output exception occurs
+     */
     private void forwardProfile(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         dispatcher = request.getRequestDispatcher("profile.jsp");
         dispatcher.forward(request, response);
     }
 
+    /**
+     * Sets the "action" parameter of the request to "edit" and forwards to the profile page ("/profile.jsp") for editing
+     *
+     * @param request  The HttpServletRequest object
+     * @param response The HttpServletResponse object
+     * @throws IOException      If an input or output exception occurs
+     * @throws ServletException If a servlet-specific problem occurs
+     */
     private void editProfile(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         request.setAttribute("action", "edit");
@@ -77,29 +120,38 @@ public class ProfileServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
-    private void deleteProfile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    /**
+     * Deletes the user profile and redirects to the main page ("/my-blog") if successful,
+     * otherwise redirects to the profile page with an error message.
+     *
+     * @param request  The HttpServletRequest object
+     * @param response The HttpServletResponse object
+     * @throws IOException If an input or output exception occurs
+     */
+    private void deleteProfile(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         User user = SessionManager.getUserFromSession(request);
-        boolean result = SessionManager.isUserInSession(request) && userService.deleteUser(user);
-        if (result) {
-            SessionManager.deleteUserFromSession(request);
-            SessionManager.sendMessageToSession(request,
-                    "Profile has been deleted successfully!");
-            response.sendRedirect("/my-blog");
-        }
-        else {
-            SessionManager.sendMessageToSession(request,
-                    "Hm, something's wrong... Please, try again later!");
-            response.sendRedirect("/my-blog/profile");
+        try {
+            userService = UserService.getInstance();
+            boolean result = SessionManager.isUserInSession(request) && userService.deleteUser(user);
+            if (result) {
+                SessionManager.deleteUserFromSession(request);
+                SessionManager.sendMessageToSession(request,
+                        "Profile has been deleted successfully!");
+                response.sendRedirect("/my-blog");
+            } else {
+                SessionManager.sendMessageToSession(request,
+                        "Hm, something's wrong... Please, try again later!");
+                response.sendRedirect("/my-blog/profile");
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            forwardPageWithError(request, response, e);
         }
     }
 
     /**
-     * Forwards the request to the main page (/my-blog) with an error message
-     * stored in the session.
-     *
-     * This method is used when an exception occurs and need to notify the user
+     * <p> This method is used when an exception occurs and need to notify the user
      * about the error by storing the error message in the session and
-     * redirecting them to the main page.
+     * redirecting them to the next page.</p>
      *
      * @param request The HttpServletRequest object
      * @param response The HttpServletResponse object
@@ -108,8 +160,8 @@ public class ProfileServlet extends HttpServlet {
      *
      * @see SessionManager#sendMessageToSession(HttpServletRequest, String)
      */
-    private void forwardMainPageWithError(HttpServletRequest request, HttpServletResponse response, Exception e) throws IOException {
+    private void forwardPageWithError(HttpServletRequest request, HttpServletResponse response, Exception e) throws IOException, ServletException {
         SessionManager.sendMessageToSession(request, e.getMessage());
-        response.sendRedirect("/my-blog");
+        forwardProfile(request, response);
     }
 }

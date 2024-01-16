@@ -14,7 +14,6 @@
 </head>
 <c:import url="/WEB-INF/blocks/header.jsp"/>
 <body>
-
 <div class="containerBody body">
     <div class="py-5 text-center">
         <h2>Signup</h2>
@@ -23,6 +22,7 @@
         <div class="col-md-8 mx-auto">
             <form method="post" action="/my-blog/login?action=signUp" class="needs-validation" novalidate="">
                 <div class="row">
+
                     <div class="col-md-6 mb-3">
                         <label for="firstName">First name</label>
                         <input type="firstName" name="firstName"
@@ -31,6 +31,7 @@
                             Valid first name is required.
                         </div>
                     </div>
+
                     <div class="col-md-6 mb-3">
                         <label for="lastName">Last name</label>
                         <input type="lastName" name="lastName"
@@ -39,6 +40,7 @@
                             Valid last name is required.
                         </div>
                     </div>
+
                 </div>
 
                 <div class="mb-3">
@@ -60,7 +62,6 @@
                         <c:remove var="message" scope="session" />
                     </c:if>
                 </div>
-
 
                 <div class="mb-3">
                     <label for="password">Password</label>

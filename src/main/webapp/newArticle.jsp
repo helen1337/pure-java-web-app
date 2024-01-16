@@ -11,7 +11,6 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link href="css/styles.css" rel="stylesheet">
     <link href="js/validator.js" rel="script">
-
 </head>
 <c:import url="/WEB-INF/blocks/header.jsp"/>
 <body>
@@ -43,14 +42,12 @@
                     Valid author name is required.
                 </div>
 
-
                 <label for="theme">Theme</label>
                 <input type="text" name="theme" placeholder="Enter theme" id="theme" class="form-control" required=""
                        value="<c:if test="${not empty article}">${article.theme}</c:if>"><br>
                 <div class="invalid-feedback">
                     Valid theme name is required.
                 </div>
-
 
                 <label for="content">Full text</label>
                 <textarea type="full_text" name="content"  class="form-control" placeholder="Enter the full text of the article" id="content" required=""
@@ -65,23 +62,17 @@
                 </c:if>
                 <c:if test="${action eq 'edit'}">
                     <button type="submit" class="btn btn-light mb-4">Edit an article</button>
-
                 </c:if>
-
 
                 <c:if test="${not empty sessionScope.message_fail}">
                     <div class="alert alert-dark" role="alert">
                             ${sessionScope.message_fail}
                     </div>
                 </c:if>
-
             </div>
         </div>
     </div>
-    ${article.id}
 </form>
 </body>
 <c:import url="/WEB-INF/blocks/footer.jsp"/>
-
-
 </html>
