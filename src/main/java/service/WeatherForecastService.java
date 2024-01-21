@@ -51,6 +51,8 @@ public class WeatherForecastService {
 
     /**
      * Starts the API server for retrieving weather forecasts.
+     *
+     * @throws RuntimeException If an error occurs while starting the API server.
      */
     private void startSearchingAPI() throws RuntimeException {
         try {

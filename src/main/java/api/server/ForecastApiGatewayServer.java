@@ -34,7 +34,8 @@ public class ForecastApiGatewayServer implements Runnable {
     protected Thread runningThread;
 
     /**
-     * */
+     * CompletableFuture to indicate whether the server has started successfully.
+     */
     private CompletableFuture<Boolean> serverStartedFuture = new CompletableFuture<>();
 
     /**
@@ -50,7 +51,10 @@ public class ForecastApiGatewayServer implements Runnable {
     }
 
     /**
-     * */
+     * Gets the CompletableFuture indicating whether the server has started.
+     *
+     * @return The CompletableFuture<Boolean> representing the server start status.
+     */
     public CompletableFuture<Boolean> getFuture() {
         return serverStartedFuture;
     }
