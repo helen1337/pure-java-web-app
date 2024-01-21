@@ -30,6 +30,8 @@ The site takes into account whether you are an authorized user to protect your d
 
 `urlDB`, `driverDB`, `userDB`, `passwordDB` - data for connecting to your database;
 
+`apiHost` - weather API host used in the application;
+
 `apiKey` - token for using the weather API, get on https://openweathermap.org/
 
 4. run the table creation SQL script `src/blog.sql` in your database

@@ -5,6 +5,7 @@ import utils.AppConfigurationLoader;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * The ForecastApiGatewayServer class represents a server for interacting with the OpenWeatherMap API
@@ -33,6 +34,10 @@ public class ForecastApiGatewayServer implements Runnable {
     protected Thread runningThread;
 
     /**
+     * */
+    private CompletableFuture<Boolean> serverStartedFuture = new CompletableFuture<>();
+
+    /**
      * Constructs a ForecastApiGatewayServer with the specified server port.
      *
      * <p> When restarting the server, it is important to create a new instance
@@ -45,6 +50,12 @@ public class ForecastApiGatewayServer implements Runnable {
     }
 
     /**
+     * */
+    public CompletableFuture<Boolean> getFuture() {
+        return serverStartedFuture;
+    }
+
+    /**
      * Runs the server, accepting client connections and processing requests.
      */
     public void run() {
@@ -52,6 +63,7 @@ public class ForecastApiGatewayServer implements Runnable {
             this.runningThread = Thread.currentThread();
         }
         openServerSocket();
+        serverStartedFuture.complete(true);
         while (!isStopped) {
             Socket clientSocket;
             try {
@@ -105,7 +117,7 @@ public class ForecastApiGatewayServer implements Runnable {
             // reads the first line from the input stream, assuming it is the city name sent by the client
             String city = in.readLine();
             // build a string for http request
-            String remoteHost = "api.openweathermap.org";
+            String remoteHost = AppConfigurationLoader.getProperty("apiHost");
             String apiKey = AppConfigurationLoader.getProperty("apiKey");
             String param = "/data/2.5/weather?q=" + city + "&appid=" + apiKey;
             String httpRequest = "GET " + param + " HTTP/1.0\n";

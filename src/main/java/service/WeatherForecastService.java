@@ -6,6 +6,7 @@ import api.server.ForecastApiGatewayServer;
 import parsers.ForecastJSONParser;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Service class for retrieving and searching weather forecasts.
@@ -15,7 +16,6 @@ public class WeatherForecastService {
     private ForecastApiGatewayServer server;
     private final ForecastApiClient client;
     private static WeatherForecastService instance;
-
     private static WeatherForecast weatherForecast = null;
     private static final int port = 9000;
 
@@ -42,11 +42,11 @@ public class WeatherForecastService {
      * @throws IOException If an I/O error occurs while retrieving the weather forecast.
      */
     public WeatherForecast searchWeatherCity(String city) throws IOException, RuntimeException {
-            startSearchingAPI();
-            String forecastJSON = client.getJSON(city);
-            stopAPI();
-            weatherForecast = ForecastJSONParser.parsJson(forecastJSON, city);
-            return weatherForecast;
+        startSearchingAPI();
+        String forecastJSON = client.getJSON(city);
+        stopAPI();
+        weatherForecast = ForecastJSONParser.parsJson(forecastJSON, city);
+        return weatherForecast;
     }
 
     /**
@@ -56,9 +56,14 @@ public class WeatherForecastService {
         try {
             server = new ForecastApiGatewayServer(port);
             new Thread(server).start();
+            try {
+                server.getFuture().get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
             System.out.println("Server start");
         } catch (Exception e) {
-            throw new RuntimeException("Error weather API server");
+            throw new RuntimeException("Error weather API server", e);
         }
     }
 
