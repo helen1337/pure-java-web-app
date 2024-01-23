@@ -1,6 +1,7 @@
 package servlets;
 
 import models.Article;
+import models.User;
 import service.ArticleService;
 import utils.SessionManager;
 import utils.StringUtils;
@@ -165,15 +166,23 @@ public class AllArticlesServlet extends HttpServlet {
     /**
      * Forwards the request to display the list of articles based on the specified author.
      *
-     * <p>This method retrieves the author parameter from the HttpServletRequest,
-     * uses the ArticleService to retrieve a list of articles based on the provided author,
-     * sets the articlesList attribute in the request scope, and forwards the request to the JSP
-     * page specified by the nextJSP parameter.</p>
-     *
-     * <p>This method uses a try-catch block to handle potential exceptions
-     * that may occur while working with the database by calling a method
-     * that generates an error message and redirects the user to the main page
-     * with an alert message.</p>
+     * <p>  This method retrieves the author parameter from the HttpServletRequest,
+     *      based on the value of author, does the following:
+     * </p>
+     * <ul>
+     *      <p> If author isn't null:</p>
+     *      <ul>
+     *          If author == user:
+     *          <ul> User exists in the session:
+     *          <p> Calls forwardUserArticles() to display a list of articles owned by the user in the session.</p>
+     *          User does not exist:
+     *          <p> Redirect to the all articles page with warning.</p>
+     *          </ul>
+     *          Otherwise, assumes that the parameter contains the article ID for searching for the author
+     *          and calls the corresponding method.
+     *      </ul>
+     *      If author is null, redirect to the all articles page with warning.
+     *  </ul>
      *
      * @see #nextJSP
      * @see #forwardMainPageWithError(HttpServletRequest, HttpServletResponse, Exception)
@@ -184,9 +193,82 @@ public class AllArticlesServlet extends HttpServlet {
      */
     private void forwardAuthorArticles(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String author = request.getParameter("author");
+        if (author != null) {
+            switch (author) {
+                case "user":
+                    if (SessionManager.isUserInSession(request)) {
+                        forwardUserArticles(request, response);
+                    }
+                    else {
+                        SessionManager.sendMessageToSession(request,
+                                "Necessary be logged in to show user articles.");
+                        response.sendRedirect("/my-blog/all_articles");
+                    }
+                    break;
+                    default: forwardAuthorArticlesByArticle(request, response, author);
+            }
+        }
+        else {
+            SessionManager.sendMessageToSession(request,
+                    "Invalid URL, necessary be logged in or provide an article.");
+            response.sendRedirect("/my-blog/all_articles");
+        }
+    }
+
+    /**
+     * Forwards the user-specific articles to a JSP page.
+     *
+     * <p>This method uses a try-catch block to handle potential exceptions
+     * that may occur while working with the database by calling a method
+     * that generates an error message and redirects the user to the main page
+     * with an alert message.</p>
+     *
+     * @param request  HttpServletRequest object
+     * @param response HttpServletResponse object
+     * @throws IOException      If an input or output exception occurs
+     * @throws ServletException If a servlet exception occurs
+     */
+    private void forwardUserArticles(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        User user = SessionManager.getUserFromSession(request);
+        // Note: Assuming that user != null has already been checked in forwardAuthorArticles() before calling this method
+        int user_id = user.getUser_id();
         try {
             articleService = ArticleService.getInstance();
-            List<Article> articlesList = articleService.getArticle("author", author);
+            List<Article> articlesList = articleService.getArticle("user_id", user_id);
+            if (articlesList.isEmpty()) {
+                SessionManager.sendMessageToSession(request,
+                        "Invalid URL, necessary be logged in or provide an article.");
+                response.sendRedirect("/my-blog/all_articles");
+            }
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);
+            request.setAttribute("articlesList", articlesList);
+            dispatcher.forward(request, response);
+        } catch (SQLException | ClassNotFoundException e) {
+            forwardMainPageWithError(request, response, e);
+        }
+    }
+
+    /**
+     * Forwards the user-specific articles to a JSP page.
+     * <p> Unlike the forwardUserArticles method, this method calculates the author of the articles
+     * (i.e. the existing user) using the article ID, so as not to reveal the user ID in requests.</p>
+     *
+     * <p>This method uses a try-catch block to handle potential exceptions
+     * that may occur while working with the database by calling a method
+     * that generates an error message and redirects the user to the main page
+     * with an alert message.</p>
+     *
+     * @param request  HttpServletRequest object
+     * @param response HttpServletResponse object
+     * @throws IOException      If an input or output exception occurs
+     * @throws ServletException If a servlet exception occurs
+     */
+    private void forwardAuthorArticlesByArticle(HttpServletRequest request, HttpServletResponse response, String id) throws IOException, ServletException {
+        try {
+            articleService = ArticleService.getInstance();
+            Article article = articleService.getArticle(id);
+            int user_id = article.getUser_id();
+            List<Article> articlesList = articleService.getArticle("user_id", user_id);
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);
             request.setAttribute("articlesList", articlesList);
             dispatcher.forward(request, response);

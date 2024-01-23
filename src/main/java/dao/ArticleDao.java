@@ -20,9 +20,9 @@ public interface ArticleDao {
      * Add a new article
      *
      * @param a the article to be added
-     * @return the last article that was added
+     * @return True if the article is successfully added otherwise false
      */
-    Article addArticle(Article a);
+    boolean addArticle(Article a);
 
     /**
      * Delete an article based on its unique identifier

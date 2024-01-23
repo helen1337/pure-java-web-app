@@ -38,7 +38,7 @@ public class ArticleService {
      * @return True if the article is successfully added otherwise false
      */
     public boolean addArticle(Article article) {
-        return Objects.nonNull(articleDao.addArticle(article));
+        return articleDao.addArticle(article);
     }
 
     /**
@@ -54,6 +54,18 @@ public class ArticleService {
             ArticleUtils.cutContent(list);
         }
         return list;
+    }
+
+    /**
+     * Retrieves a list of articles based on a specified column and its value
+     *
+     * @param column The column by which to filter articles
+     * @param value  The value to match in the specified column
+     * @return A list of articles that match the specified criteria
+     * @overload getArticle(String, String)
+     */
+    public List<Article> getArticle(String column, int value) {
+        return getArticle(column, String.valueOf(value));
     }
 
     /**
@@ -109,5 +121,16 @@ public class ArticleService {
      */
     public boolean deleteArticle(String id) {
         return articleDao.deleteArticle(id);
+    }
+
+    /**
+     * Deletes an article based on its unique identifier.
+     *
+     * @param id The unique identifier of the article to be deleted.
+     * @return True if the article is successfully deleted; otherwise, false.
+     * @overload deleteArticle(String)
+     */
+    public boolean deleteArticle(int id) {
+        return deleteArticle(String.valueOf(id));
     }
 }

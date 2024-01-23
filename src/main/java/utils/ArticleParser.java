@@ -1,6 +1,7 @@
 package utils;
 
 import models.Article;
+import models.User;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
@@ -25,12 +26,18 @@ public class ArticleParser {
         if (Objects.nonNull(request.getParameter("id"))) {
             id = Integer.parseInt(request.getParameter("id"));
         }
+        int user_id = 0;
+        if (SessionManager.isUserInSession(request)) {
+            User user = SessionManager.getUserFromSession(request);
+            user_id = user.getUser_id();
+        }
         Article article = new Article();
         article.setTitle(title);
         article.setAuthor(author);
         article.setTheme(theme);
         article.setContent(content);
         article.setId(id);
+        article.setUser_id(user_id);
         return article;
     }
 }

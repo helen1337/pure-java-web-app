@@ -1,6 +1,7 @@
 package servlets;
 
 import models.Article;
+import models.User;
 import service.ArticleService;
 import utils.ArticleParser;
 import utils.SessionManager;
@@ -24,21 +25,48 @@ public class ArticleServlet extends HttpServlet {
      * Handles GET requests related to articles, such as editing, deleting,
      * adding, or viewing an article.
      *
-     * <p> It checks the "action" parameter in the request to determine
-     * the appropriate action and invokes the corresponding method.
-     * If the action is not specified, it retrieves and displays a specific article
-     * based on the "id" parameter. </p>
+     * <p>  Checks the "id" and "action" parameters in the request. </p>
+     * <ul>
+     *     If "id" isn't null:
+     *     <ul>
+     *         <p> Uses ArticleService instance to retrieve the Article
+     *         instance based on the "id". </p>
+     *         <p> If "action" is null: calls method
+     *         forwardArticle(HttpServletRequest, HttpServletResponse, Article)
+     *         to forward the request to the view displaying the article. </p>
+     *         <p> If "action" isn't null: </p>
+     *         <p> Checks the user in session, if user exists and user is article's author
+     *         continue following action otherwise redirect to the all articles page
+     *         with the permission warning:</p>
+     *         <ul>
+     *             <p> "action" is 'edit': calls editArticle(HttpServletRequest,
+     *             HttpServletResponse, Article) to forward request to the view editing the article.
+     *             </p>
      *
-     * <p> If the user has permission for the requested action (editing, deleting),
-     * the method proceeds with the action. Otherwise it sends a message to the user's
-     * session indicating a lack of permission and redirects to the main articles page.</p>
+     *             <p> "action" is 'delete' calls deleteArticle(HttpServletRequest,
+     *             HttpServletResponse, Article) to forward request to the view deleting the article.
+     *             </p>
      *
-     * <p>This method uses a try-catch block to handle potential exceptions
-     * that may occur while working with the database by calling a method
-     * that generates an error message and redirects the user to the main page
-     * with an alert message.</p>
+     *             <p> otherwise calls forwardMainPageWithError (HttpServletRequest, HttpServletResponse, Exception)
+     *             to forward request to the main page with an error message about the wrong URL.
+     *             </p>
+     *         </ul>
+     *     </ul>
+     *     This code in "id!=null" block uses a try-catch block to handle potential exceptions
+     *     that may occur while working with the database by calling a method
+     *     that generates an error message and redirects the user to the main page
+     *     with an alert message.
+     *     <p></p>
+     *     If "id" is null:
+     *     <ul>
+     *         and "action" is 'add': calls forwardCreateArticlePage(HttpServletRequest,
+     *         HttpServletResponse, Article) to forward request to the view create the article.
+     *     </ul>
      *
-     * @see #forwardMainPageWithError(HttpServletRequest, HttpServletResponse, Exception)
+     *     Otherwise calls forwardMainPageWithError (HttpServletRequest, HttpServletResponse, Exception)
+     *     to forward request to the main page with an error message about the wrong URL.
+     * </ul>
+     *
      * @param request  the HttpServletRequest object containing the client's request
      * @param response the HttpServletResponse object for sending the response to the client
      * @throws ServletException if a servlet-specific problem occurs
@@ -46,37 +74,66 @@ public class ArticleServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-        if (action != null) {
-            if (saveURL(request, action)) {
-                switch (action) {
-                    case "edit" -> editArticle(request, response);
-                    case "delete" -> deleteArticle(request, response);
-                    case "add" -> {
-                        String nextJSP = "/newArticle.jsp";
-                        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);
-                        dispatcher.forward(request, response);
-                    }
-                }
-            }
-            else {
-                SessionManager.sendMessageToSession(request,
-                        "You don't have permission to delete or edit this article.");
-                response.sendRedirect("/my-blog/all_articles");
-            }
-        }
-        else {
-            String id = request.getParameter("id");
+        String id = request.getParameter("id");
+        if (id != null) {
             try {
                 articleService = ArticleService.getInstance();
                 Article article = articleService.getArticle(id);
-                request.setAttribute("article", article);
-                String nextJSP = "/article.jsp";
-                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);
-                dispatcher.forward(request, response);
-            } catch (SQLException | ClassNotFoundException e) {
+                if (action == null) {
+                    forwardArticle(request, response, article);
+                } else {
+                    if (saveURL(request, response, article)) {
+                        switch (action) {
+                            case "edit" -> editArticle(request, response, article);
+                            case "delete" -> deleteArticle(request, response, article);
+                            default -> throw new RuntimeException("This URL does not exist");
+                        }
+                    } else {
+                        SessionManager.sendMessageToSession(request,
+                                "You don't have permission to delete or edit this article.");
+                        response.sendRedirect("/my-blog/all_articles");
+                    }
+                }
+            } catch (SQLException | ClassNotFoundException | RuntimeException e) {
                 forwardMainPageWithError(request, response, e);
             }
         }
+        else if (action.equals("add")) {
+            forwardCreateArticlePage(request, response);
+        }
+        else {
+            forwardMainPageWithError(request, response, new RuntimeException("This URL does not exist"));
+        }
+    }
+
+    /**
+     * Forwards the given {@link Article} to the "/article.jsp" page.
+     *
+     * @param request  the HttpServletRequest object containing the client's request
+     * @param response the HttpServletResponse object for sending the response to the client
+     * @param article  The Article to be forwarded.
+     * @throws ServletException If a servlet-specific problem occurs.
+     * @throws IOException      If an I/O error occurs.
+     */
+    private void forwardArticle(HttpServletRequest request, HttpServletResponse response, Article article) throws ServletException, IOException {
+        request.setAttribute("article", article);
+        String nextJSP = "/article.jsp";
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);
+        dispatcher.forward(request, response);
+    }
+
+    /**
+     * Forwards the request to the "/newArticle.jsp" page to create a new article.
+     *
+     * @param request  the HttpServletRequest object containing the client's request
+     * @param response the HttpServletResponse object for sending the response to the client
+     * @throws ServletException If a servlet-specific problem occurs.
+     * @throws IOException      If an I/O error occurs.
+     */
+    private void forwardCreateArticlePage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String nextJSP = "/newArticle.jsp";
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);
+        dispatcher.forward(request, response);
     }
 
     /**
@@ -84,20 +141,17 @@ public class ArticleServlet extends HttpServlet {
      * Ensures data security when manually entering URL.
      *
      * @param request The HttpServletRequest object
-     * @param action  The action to be performed
+     * @param response The HttpServletResponse object
+     * @param article The Article object to check
      * @return true if user's authenticated and is the article's author or action == "add"
      * otherwise false
      */
-    private boolean saveURL(HttpServletRequest request, String action) {
-        if (action.equals("add")) {
-            return true;
-        }
+    private boolean saveURL(HttpServletRequest request, HttpServletResponse response, Article article) throws IOException {
         if (!SessionManager.isUserInSession(request)) {
             return false;
         }
-        String checkAuthor = request.getParameter("checkAuthor");
-        String authorArticle = request.getParameter("author");
-        return Objects.equals(authorArticle, checkAuthor);
+        User user = SessionManager.getUserFromSession(request);
+        return Objects.equals(user.getUser_id(), article.getUser_id());
     }
 
     /**
@@ -119,19 +173,12 @@ public class ArticleServlet extends HttpServlet {
      * @throws ServletException If a servlet-specific problem occurs
      * @throws IOException      If an input or output exception occurs
      */
-    private void editArticle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String id = request.getParameter("id");
-        try {
-            articleService = ArticleService.getInstance();
-            Article article = articleService.getArticle(id);
-            request.setAttribute("article", article);
-            request.setAttribute("action", "edit");
-            String nextJSP = "/newArticle.jsp";
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);
-            dispatcher.forward(request, response);
-        } catch (SQLException | ClassNotFoundException e) {
-            forwardMainPageWithError(request, response, e);
-        }
+    private void editArticle(HttpServletRequest request, HttpServletResponse response, Article article) throws ServletException, IOException {
+        request.setAttribute("article", article);
+        request.setAttribute("action", "edit");
+        String nextJSP = "/newArticle.jsp";
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);
+        dispatcher.forward(request, response);
     }
 
     /**
@@ -152,22 +199,16 @@ public class ArticleServlet extends HttpServlet {
      * @param response The HttpServletResponse object
      * @throws IOException If an input or output exception occurs
      */
-    private void deleteArticle(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String id = request.getParameter("id");
-        try {
-            articleService = ArticleService.getInstance();
-            boolean result = articleService.deleteArticle(id);
-            if (result) {
-                SessionManager.sendMessageToSession(request,
-                        "The article has been successfully deleted!");
-            } else {
-                SessionManager.sendMessageToSession(request,
-                        "The article hasn't been deleted! Please, try again later.");
-            }
-            response.sendRedirect("/my-blog/all_articles");
-        } catch (SQLException | ClassNotFoundException e) {
-            forwardMainPageWithError(request, response, e);
+    private void deleteArticle(HttpServletRequest request, HttpServletResponse response, Article article) throws IOException {
+        boolean result = articleService.deleteArticle(article.getId());
+        if (result) {
+            SessionManager.sendMessageToSession(request,
+                    "The article has been successfully deleted!");
+        } else {
+            SessionManager.sendMessageToSession(request,
+                    "The article hasn't been deleted! Please, try again later.");
         }
+        response.sendRedirect("/my-blog/all_articles");
     }
 
     /**
@@ -242,6 +283,7 @@ public class ArticleServlet extends HttpServlet {
      * @throws IOException If an input or output exception occurs
      */
     private void forwardMainPageWithError(HttpServletRequest request, HttpServletResponse response, Exception e) throws IOException {
+        System.out.println("calling forwardMainPageWithError");
         SessionManager.sendMessageToSession(request, e.getMessage());
         response.sendRedirect("/my-blog");
     }

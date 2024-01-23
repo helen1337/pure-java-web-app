@@ -17,7 +17,7 @@
                         <li><a class="dropdown-item" href="/my-blog/all_articles">All Articles</a></li>
                         <li><a class="dropdown-item" href="/my-blog/article?action=add">New article</a></li>
                         <c:if test="${not empty sessionScope.user}">
-                            <li><a class="dropdown-item" href="/my-blog/all_articles?action=searchAuthorArticles&author=${sessionScope.user.login}">My article</a></li>
+                            <li><a class="dropdown-item" href="/my-blog/all_articles?action=searchAuthorArticles&author=user">My article</a></li>
                         </c:if>
                     </ul>
                 </li>

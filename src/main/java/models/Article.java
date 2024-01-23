@@ -3,18 +3,20 @@ package models;
 /**
  * The class represents a model for an article.
  * <p>It encapsulates various attributes of an article, including its unique identifier (ID),
- * title, author, theme, timestamp and content.</p>
+ * user unique identifier (user_id), title, author, theme, timestamp and content.</p>
  */
 public class Article {
     private int id;
+    private int user_id;
     private String title;
     private String author;
     private String theme;
     private String time;
     private String content;
     public Article() {}
-    public Article(int id, String title, String author, String theme, String time, String content) {
+    public Article(int id, int user_id, String title, String author, String theme, String time, String content) {
         this.id = id;
+        this.user_id = user_id;
         this.title = title;
         this.author = author;
         this.theme = theme;
@@ -25,6 +27,7 @@ public class Article {
     public String toString() {
         return "Article{" +
                 "id=" + id +
+                ", user_id=" + user_id + '\'' +
                 ", title='" + title + '\'' +
                 ", author='" + author + '\'' +
                 ", theme='" + theme + '\'' +
@@ -37,6 +40,12 @@ public class Article {
     }
     public void setId(int id) {
         this.id = id;
+    }
+    public int getUser_id() {
+        return user_id;
+    }
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
     public String getTitle() {
         return title;

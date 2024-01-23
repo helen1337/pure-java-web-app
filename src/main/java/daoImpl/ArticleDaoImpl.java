@@ -72,43 +72,21 @@ public class ArticleDaoImpl implements ArticleDao {
      * @see daoImpl.ArticleDao#addArticle(models.Article)
      */
     @Override
-    public Article addArticle(Article a) {
-        String sql = "insert into article(title, author, theme, content, time) " +
-                "values (?,?,?,?,CURDATE()) ";
+    public boolean addArticle(Article a) {
+        String sql = "insert into article(title, author, theme, content, user_id, time) " +
+                "values (?,?,?,?,?,CURDATE())";
+        int result = 0;
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, a.getTitle());
             ps.setString(2, a.getAuthor());
             ps.setString(3, a.getTheme());
             ps.setString(4, a.getContent());
-            ps.executeUpdate();
+            ps.setInt(5, a.getUser_id());
+            result = ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return this.getLastArticle();
-    }
-
-    /**
-     * Retrieves the most recently added article from the database
-     *
-     * @return the latest Article object, or null if no articles are found
-     */
-    private Article getLastArticle() {
-        String sql = "select * from article order by time desc limit 1";
-        try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                Article article = new Article(
-                        rs.getInt("id"),
-                        rs.getString("title"),
-                        rs.getString("author"),
-                        rs.getString("theme"),
-                        rs.getString("time"),
-                        rs.getString("content"));
-                return article;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return result > 0;
     }
 
     /*
@@ -164,6 +142,7 @@ public class ArticleDaoImpl implements ArticleDao {
             while (rs.next()) {
                 Article article = new Article(
                         rs.getInt("id"),
+                        rs.getInt("user_id"),
                         rs.getString("title"),
                         rs.getString("author"),
                         rs.getString("theme"),
@@ -185,7 +164,7 @@ public class ArticleDaoImpl implements ArticleDao {
      */
     @Override
     public List<Article> getArticleByColumn(String column, String value) {
-        List<Article> articlesList = new ArrayList<>();;
+        List<Article> articlesList = new ArrayList<>();
         Article a;
         String sql = "select * from article where " + column + " = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -194,6 +173,7 @@ public class ArticleDaoImpl implements ArticleDao {
                 while (rs.next()) {
                     a = new Article(
                             rs.getInt("id"),
+                            rs.getInt("user_id"),
                             rs.getString("title"),
                             rs.getString("author"),
                             rs.getString("theme"),
@@ -223,6 +203,7 @@ public class ArticleDaoImpl implements ArticleDao {
                 if (rs.next()) {
                     article = new Article(
                             rs.getInt("id"),
+                            rs.getInt("user_id"),
                             rs.getString("title"),
                             rs.getString("author"),
                             rs.getString("theme"),

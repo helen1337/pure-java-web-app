@@ -11,6 +11,7 @@ CREATE TABLE `user` (
 
 CREATE TABLE `article` (
                            `id` INT(11) NOT NULL AUTO_INCREMENT,
+                           `user_id` INT(11) DEFAULT 0,
                            `title` VARCHAR(80) NOT NULL,
                            `author` VARCHAR(30) NOT NULL,
                            `theme` VARCHAR(30) NOT NULL,
