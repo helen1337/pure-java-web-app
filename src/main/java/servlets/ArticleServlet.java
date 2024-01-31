@@ -82,7 +82,7 @@ public class ArticleServlet extends HttpServlet {
                 if (action == null) {
                     forwardArticle(request, response, article);
                 } else {
-                    if (saveURL(request, response, article)) {
+                    if (saveURL(request, article)) {
                         switch (action) {
                             case "edit" -> editArticle(request, response, article);
                             case "delete" -> deleteArticle(request, response, article);
@@ -141,12 +141,11 @@ public class ArticleServlet extends HttpServlet {
      * Ensures data security when manually entering URL.
      *
      * @param request The HttpServletRequest object
-     * @param response The HttpServletResponse object
      * @param article The Article object to check
      * @return true if user's authenticated and is the article's author or action == "add"
      * otherwise false
      */
-    private boolean saveURL(HttpServletRequest request, HttpServletResponse response, Article article) throws IOException {
+    private boolean saveURL(HttpServletRequest request, Article article) throws IOException {
         if (!SessionManager.isUserInSession(request)) {
             return false;
         }

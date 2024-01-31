@@ -43,7 +43,6 @@ public class ForecastApiClient {
              PrintWriter out = new PrintWriter(outputStream, true);
              InputStream inputStream = clientSocket.getInputStream();
              BufferedReader in = new BufferedReader(new InputStreamReader(inputStream))) {
-
                 out.println(city);
                 out.flush();
                 outputStream.flush();

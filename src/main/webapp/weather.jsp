@@ -19,8 +19,8 @@
     <div class="py-5 text-center">
         <h2>Weather in your city</h2>
     </div>
-    <div class="needs-validation container-input-city" novalidate="">
-        <form action="/my-blog/weather" method="get">
+    <div class="container-input-city">
+        <form action="/my-blog/weather" method="get" class="needs-validation" novalidate="">
             <div class="row g-3 center mb-4">
                 <div class="col-auto">
                     <label for="city" class="visually-hidden">City</label>
@@ -65,4 +65,3 @@
 </body>
 <c:import url="/WEB-INF/blocks/footer.jsp"/>
 </html>
-

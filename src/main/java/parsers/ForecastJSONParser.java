@@ -21,7 +21,6 @@ public class ForecastJSONParser {
      *
      * @param city the name of the city for which to retrieve weather information
      * @return WeatherForecast object representing the parsed weather information
-     * @throws IOException If an I/O error occurs while making the weather request
      * @throws RuntimeException if the JSON is empty or has an error code
      */
     public static WeatherForecast parsJson(String JSON, String city) throws RuntimeException {

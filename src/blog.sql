@@ -19,3 +19,13 @@ CREATE TABLE `article` (
                            `content` TEXT,
                            PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `comment`(
+                        `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'primary_key',
+                        `article_id` INT(11) DEFAULT NULL,
+                        `user_id` INT(11) DEFAULT NULL,
+                        `nickname` VARCHAR(20) NOT NULL,
+                        `content` TEXT,
+                        `time` date NOT NULL,
+                        PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;

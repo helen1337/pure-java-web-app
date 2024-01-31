@@ -40,6 +40,16 @@
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>CommentServlet</servlet-name>
+    <servlet-class>servlets.CommentServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>CommentServlet</servlet-name>
+    <url-pattern>/comment</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>ProfileServlet</servlet-name>
     <servlet-class>servlets.ProfileServlet</servlet-class>
   </servlet>

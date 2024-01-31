@@ -12,8 +12,6 @@ public class StringUtils {
      * @return true if the string is empty or null after trimming otherwise false
      */
     public static boolean isEmpty(String str) {
-        if (str == null || str.trim().equals(""))
-            return true;
-        return false;
+        return str == null || str.trim().equals("");
     }
 }

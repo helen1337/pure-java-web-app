@@ -17,11 +17,11 @@
     <div class="container h-200 body">
         <div class="row d-flex justify-content-center align-items-center h-200">
             <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                <div class="needs-validation card-body p-5 text-center">
+                    <div class="card-body p-5 text-center">
                     <div class="mb-md-5 mt-md-4">
                         <h5 class="text-uppercase">My Blog Account</h5>
                         <p class="text-dark-50">Please enter your login and password!</p>
-                        <form method="post" action="/my-blog/login">
+                        <form method="post" action="/my-blog/login" class="needs-validation" novalidate="">
                         <div class="form-outline form-white mb-3">
                             <div class="input-group">
                                 <div class="input-group-prepend">
