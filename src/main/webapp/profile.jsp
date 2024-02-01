@@ -50,7 +50,6 @@
                             <div class="col-sm-9 text-secondary">
                                     ${sessionScope.user.lastName}
                             </div>
-
                         </div>
 
                         <hr>
@@ -114,15 +113,14 @@
                         <div class="col-sm-3">
                             <h6 class="mb-0">Last name</h6>
                         </div>
-                    <div class="col-sm-9 text-secondary">
-                        <input type="lastName" name="lastName"
-                               class="form-control" id="lastName" placeholder="" value="${sessionScope.user.lastName}" required="">
-                        <div class="invalid-feedback">
-                            Valid last name is required.
+                        <div class="col-sm-9 text-secondary">
+                            <input type="lastName" name="lastName"
+                                   class="form-control" id="lastName" placeholder="" value="${sessionScope.user.lastName}" required="">
+                            <div class="invalid-feedback">
+                                Valid last name is required.
+                            </div>
                         </div>
                     </div>
-
-                </div>
 
                     <hr>
 
@@ -187,20 +185,16 @@
             </c:if>
 
         </form>
-        <form method="get" action="/profile">
 
+        <form method="get" action="/profile">
             <c:if test="${empty action}">
             <nav class="blog-pagination" aria-label="Pagination">
                 <a class="btn btn-outline-primary rounded-pill" href="/my-blog/profile?action=edit">Edit</a>
                 <a class="btn btn-outline-secondary rounded-pill" href="/my-blog/profile?action=delete">Delete</a>
             </nav>
             </c:if>
-
         </form>
-
 </div>
-
 </body>
 <c:import url="/WEB-INF/blocks/footer.jsp"/>
-
 </html>

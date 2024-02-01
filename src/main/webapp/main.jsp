@@ -48,6 +48,7 @@
                 <a class="btn btn-outline-light" href="/my-blog/all_articles">Go to our articles</a>
             </div>
         </div>
+
         <div class="col-md-6">
             <div class="h-100 p-5 bg-body-tertiary border rounded-3">
                 <h2>Add borders</h2>
@@ -56,6 +57,7 @@
             </div>
         </div>
     </div>
+
     <div class="py-5">
         <p class="lead">Experience the warmth of a platform that celebrates diversity,
             encourages creativity and fosters meaningful connections.

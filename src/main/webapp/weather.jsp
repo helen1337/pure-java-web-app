@@ -20,11 +20,14 @@
         <h2>Weather in your city</h2>
     </div>
     <div class="container-input-city">
-        <form action="/my-blog/weather" method="get">
+        <form action="/my-blog/weather" method="get" class="needs-validation" novalidate="">
             <div class="row g-3 center mb-4">
                 <div class="col-auto">
                     <label for="city" class="visually-hidden">City</label>
-                    <input type="city" name="city" class="form-control" id="city" placeholder="City">
+                    <input type="text" name="city" class="form-control" id="city" placeholder="City" required="">
+                    <div class="invalid-feedback">
+                        Enter the city.
+                    </div>
                 </div>
                 <div class="col-auto">
                     <input type="hidden" id="action" name="action" value="searchByCity">
@@ -43,8 +46,8 @@
             <div class="card-body">
                 <h4>${weatherForecast.city}</h4>
                 <p><strong>${weatherForecast.weatherParam}: ${weatherForecast.additionWeatherParams}</strong></p>
-                <p>longitude:${weatherForecast.longitude}, latitude:${weatherForecast.latitude}</p>
-                <p>Current temperature:<strong>${weatherForecast.temp}°C</strong></p>
+                <p>longitude: ${weatherForecast.longitude}, latitude: ${weatherForecast.latitude}</p>
+                <p>Current temperature: <strong>${weatherForecast.temp}°C</strong></p>
                 <p>Feels like: <strong>${weatherForecast.tempFeelsLike}°C</strong></p>
                 <p>Atmospheric Pressure: <strong>${weatherForecast.atmPressure} hPa</strong></p>
                 <p>Humidity: <strong>${weatherForecast.humidity}%</strong></p>
@@ -60,9 +63,5 @@
     </div>
 </div>
 </body>
-
-
 <c:import url="/WEB-INF/blocks/footer.jsp"/>
-
 </html>
-

@@ -10,43 +10,35 @@
             crossorigin="anonymous"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link href="css/styles.css" rel="stylesheet">
+    <script src="js/validator.js"></script>
 </head>
 <body>
 <c:import url="/WEB-INF/blocks/header.jsp"/>
 <div class="container body">
     <div class="py-5">
+        <h3 class="pb-4 mb-4 fst-italic border-bottom">
+            Article
+        </h3>
+        <article class="blog-post">
+            <h2 class="display-5 link-body-emphasis mb-1">${article.title}</h2>
+            <p class="blog-post-meta">${article.time} by <a href="/my-blog/all_articles?action=searchAuthorArticles&author=${article.id}">${article.author}</a></p>
+            <p>Theme: <a href="/my-blog/all_articles?theme=${article.theme}">${article.theme}</a></p>
+            <hr>
+            <blockquote class="blockquote">
+                <p>Content</p>
+            </blockquote>
+            <p class="pb-4 mb-4 fst-italic border-bottom">${article.content}</p>
+        </article>
 
-            <h3 class="pb-4 mb-4 fst-italic border-bottom">
-                Article
-            </h3>
-
-            <form action="/article" method="get" id="articleForm" role="form">
-                <input type="hidden" id="action" name="action">
-                <article class="blog-post">
-                <h2 class="display-5 link-body-emphasis mb-1">${article.title}</h2>
-                <p class="blog-post-meta">${article.time} by <a href="/my-blog/all_articles?action=searchAuthorArticles&author=${article.author}">${article.author}</a></p>
-
-                <p>Theme: <a href="/my-blog/all_articles?theme=${article.theme}">${article.theme}</a></p>
-                <hr>
-                <blockquote class="blockquote">
-                    <p>Content</p>
-                </blockquote>
-                <p class="pb-4 mb-4 fst-italic border-bottom">${article.content}</p>
-                </article>
-            </form>
-
-            <form action="/article" method="post">
-                <input type="hidden" id="checkAuthor" name="checkAuthor" value="${sessionScope.user.login}">
-                <c:if test="${sessionScope.user.login eq article.author}">
-                    <nav class="blog-pagination" aria-label="Pagination">
-                        <a class="btn btn-outline-primary rounded-pill" href="/my-blog/article?id=${article.id}&action=edit">Edit</a>
-                        <a class="btn btn-outline-secondary rounded-pill" href="/my-blog/article?id=${article.id}&action=delete">Delete</a>
-                    </nav>
-                </c:if>
-            </form>
-
-        </div>
+        <c:if test="${sessionScope.user.user_id eq article.user_id}">
+            <nav class="blog-pagination" aria-label="Pagination">
+                <a class="btn btn-outline-primary rounded-pill" href="/my-blog/article?id=${article.id}&action=edit">Edit</a>
+                <a class="btn btn-outline-secondary rounded-pill" href="/my-blog/article?id=${article.id}&action=delete">Delete</a>
+            </nav>
+        </c:if>
     </div>
+    <jsp:include page="/comment" flush="true"/>
+</div>
 </body>
 <c:import url="/WEB-INF/blocks/footer.jsp"/>
 </html>
